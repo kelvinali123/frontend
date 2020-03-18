@@ -132,10 +132,11 @@ class PrintPreview extends React.Component {
 			totalPPN: 0,
 			activeTab: false,
 
-
+			listDataTable: [],
+			listDataTable2:[],
 		
 		}
-		BACKEND ='http://10.0.112.33:8888'
+		BACKEND ='http://10.0.112.33:4444/'
 	}
 
 	setActiveTab = (tab) => {
@@ -145,37 +146,112 @@ class PrintPreview extends React.Component {
 		})
 	}
 	}
-	
 
-	showPrintFunction = () => {
+
+	showrePrintFunction =(index)=>{
+		this.getrePrintData(index);
+		this.setState({
+			showrePrint : !this.state.showrePrint
+		})
+	}
+
+	showPrintFunction = (index) => {
+		this.getPrintData(index);
 		this.setState({
 			showPrint : !this.state.showPrint
 		})
 	}
 
 	componentDidMount(){
-		this.getPrintData()
+		 this.getTableData()
 	}
 
 	getTableData =() =>{
-		var url=BACKEND +""
+		var url=BACKEND +"printApple?get=printapple"
 		Axios.get(url)
 			.then(response=>{
 				if(response.data.data){
-					var data = response.data.data[0]
 					this.setState({
-
+						listDataTable: response.data.data
 					})
 				}
 			})
 	}
 
-getPrintData = () =>{
-	var url=BACKEND + "/printApple?get=printappleall"
-	Axios.get(url)
-            .then(response=>{
+	getTable2Data =() =>{
+		var url=BACKEND +""
+		Axios.get(url)
+			.then(response=>{
 				if(response.data.data){
-					var data = response.data.data[0]
+					this.setState({
+						listDataTable2: response.data.data
+					})
+				}
+			})
+	}
+
+	getrePrintData = async (index) =>{
+		var data = this.state.listDataTable[index]
+		console.log('data: '+ JSON.stringify(data))
+		this.setState({
+			alamatCabAMS: data.alamat_cab_ams,
+			apoOutApoteker: data.apo_out_apoteker,
+			apoOutSIA: data.apo_out_sia,
+			kepada: data.kepada,
+			kodeOutAMS: data.kode_out_ams,
+			nOPL: data.no_pl,
+			namaCabsAMS: data.nama_cabs_ams,
+			namaGudang: data.nama_gudang,
+			namaOut: data.nama_out,
+			ordLclNoPO: data.ord_lcl_no_po,
+			ordLclTglPO: data.ord_lcl_tgl_po,
+			outAddress: data.out_address,
+			outCode: data.out_code,
+			outName: data.out_name,
+			tHPDistName: data.thp_dist_name,
+			tHPNoPL: data.thp_no_pl,
+			tHPNoPOD: data.thp_no_pod,
+			tHPTglPL: data.thp_tgl_pl,
+			apj: data.apj,
+			apjTujuan: data.apj_tujuan,
+			consup: data.consup,
+			finsuptop: data.finsup_top,
+			ijinDari: data.ijin_dari,
+			ijinTujuan: data.ijin_tujuan,
+			namaOutlet: data.nama_outlet,
+			npwpDari: data.npwp_dari,
+			npwpTujuan: data.npwp_tujuan,
+			outaddressDari: data.out_address_dari,
+			outaddressTujuan: data.out_address_tujuan,
+			outnameDari: data.out_name_dari,
+			outnameTujuan: data.out_name_tujuan,
+			pembuat: data.pembuat,
+			printCount: data.print_count,
+			printed: data.printed,
+			sika: data.sika,
+			sikaTujuan: data.sika_tujuan,
+			supaddress: data.sup_address,
+			telpDari: data.telp_dari,
+			telpTujuan: data.telp_tujuan,
+			tglTransf: data.tgl_transf,
+			totalBerat: data.total_berat,
+			totalQTY: data.total_qty,
+			transFD: data.trans_fd,
+			transFH: data.trans_fh,
+			alamatPajak: data.alamat_pajak,
+			extraDiskon: data.extra_diskon,
+			namaPajak: data.nama_pajak,
+			npwpPajak: data.npwp_pajak,
+			paymentMethod: data.payment_method,
+			ppnPajak: data.ppn_pajak,
+			totalDiskon: data.total_diskon,
+			totalHarga: data.total_harga,
+			totalPPN: data.total_ppn,
+		})
+}
+
+	getPrintData = async (index) =>{
+					var data = this.state.listDataTable[index]
 					console.log('data: '+ JSON.stringify(data))
 					this.setState({
 						alamatCabAMS: data.alamat_cab_ams,
@@ -231,11 +307,7 @@ getPrintData = () =>{
 						totalDiskon: data.total_diskon,
 						totalHarga: data.total_harga,
 						totalPPN: data.total_ppn,
-		
 					})
-				}
-				
-			})
 			}
 			
 
@@ -246,6 +318,17 @@ getPrintData = () =>{
 				})
 		
 			}
+
+			resetInputData = ()=>{
+				this.setState({
+					dataDate1 : '',
+					dataDate2 : '',
+					dataSelect : '0',
+				})
+
+				
+				}
+			
 
 	
 
@@ -264,12 +347,13 @@ getPrintData = () =>{
 					
 						<Col md='2'>
 						
-						<Input type='select'>
-							<option>PL</option>
-							<option>DO</option>
-							<option>SP</option>
-							<option>Label</option>
-							<option>Faktur</option>
+						<Input type='select' value= {this.state.dataSelect}>
+							<option value='0'>--Pilih--</option>
+							<option value='1'>PL</option>
+							<option value='2'>DO</option>
+							<option value='3'>SP</option>
+							<option value='4'>Label</option>
+							<option value='5'>Faktur</option>
 						</Input>
 						</Col>
 					</Row>
@@ -279,7 +363,7 @@ getPrintData = () =>{
 						<Label>Tanggal</Label>
 						</Col>
 						<Col md='3'>
-						<Input type='date'></Input>
+						<Input type='date' value={this.state.dataDate1}></Input>
 						
 						</Col>
 						<Col md='auto'>
@@ -287,14 +371,14 @@ getPrintData = () =>{
 						
 						</Col>
 						<Col md='3'>
-						<Input type='date'></Input>
+						<Input type='date' value={this.state.dataDate2}></Input>
 						
 						</Col>
 					</Row>
 					<Row className='mt-4'>
 						<Col className='d-flex justify-content-center'>
 						<Button className='mr-2'>Search</Button>
-						<Button color='warning'>Reset</Button>
+						<Button color='warning' onClick ={()=>this.resetInputData()}>Reset</Button>
 						</Col>
 					</Row>
 							</Card>
@@ -307,7 +391,7 @@ getPrintData = () =>{
             className={classnames({ active: this.state.activeTab === '1' })}
 			onClick={() => {this.setActiveTab('1'); }}
           >
-            Gagal Print
+            Print
           </NavLink>
 		</NavItem>
 
@@ -337,15 +421,15 @@ getPrintData = () =>{
 							</thead>
 							<tbody>
 							{
-                                    //this.state.users.map((user, index)=>
-								<tr onClick={() => this.showPrintFunction()} >
-									<td></td>
-									<td></td>
-									<td></td>
+                                    this.state.listDataTable.map((data, index)=>
+								<tr onClick={() => this.showPrintFunction(index)} >
+									<td>{index+1}</td>
+									<td>{data.no_pl}</td>
+									<td>{data.trans_fh}</td>
 									<td></td>
 									<td></td>
 								</tr>
-									//)
+									)
 								}
 	
 							</tbody>
@@ -376,15 +460,15 @@ getPrintData = () =>{
 							</thead>
 							<tbody>
 							{
-                                    //this.state.users.map((user, index)=>
-								<tr onClick={() => this.showPrintFunction()} >
-									<td></td>
-									<td></td>
-									<td></td>
+                                    this.state.listDataTable2.map((data, index)=>
+								<tr onClick={() => this.showrePrintFunction(index)} >
+									<td>{index+1}</td>
+									<td>{data.no_pl}</td>
+									<td>{data.trans_fh}</td>
 									<td></td>
 									<td></td>
 								</tr>
-									//)
+									)
 								}
 	
 							</tbody>
