@@ -185,22 +185,26 @@ class PrintDO extends React.Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.props.transFD.map(transFD =>
-                                <tr>
-                                    <td className="text-center">{transFD.TransfD_ProCod}</td>
-                                    <td>{transFD.Pro_Name}</td>
-                                    <td className="text-center">{transFD.TransfD_BatchNumber}</td>
-                                    <td className="text-center">
-                                        {
-                                            transFD.TransfD_ED.substr(5, 2) + '/' + // Month
-                                            transFD.TransfD_ED.substr(8, 2) + '/' + // Date
-                                            transFD.TransfD_ED.substr(0, 4) // Year
-                                        }
-                                    </td>
-                                    <td className="text-center">{transFD.TransfD_Qty_Scan}</td>
-                                    <td className="text-center">{transFD.pack_name}</td>
-                                </tr>
-                            )}
+                            {
+                                this.props.transFD &&
+                                this.props.transFD.map(transFD =>
+                                    <tr>
+                                        <td className="text-center">{transFD.TransfD_ProCod}</td>
+                                        <td>{transFD.Pro_Name}</td>
+                                        <td className="text-center">{transFD.TransfD_BatchNumber}</td>
+                                        <td className="text-center">
+                                            {
+                                                transFD.TransfD_ED &&
+                                                transFD.TransfD_ED.substr(5, 2) + '/' + // Month
+                                                transFD.TransfD_ED.substr(8, 2) + '/' + // Date
+                                                transFD.TransfD_ED.substr(0, 4) // Year
+                                            }
+                                        </td>
+                                        <td className="text-center">{transFD.TransfD_Qty_Scan}</td>
+                                        <td className="text-center">{transFD.pack_name}</td>
+                                    </tr>
+                                )
+                            }
                         </tbody>
                     </Table>
                     <Card className='mt-4'></Card>
@@ -229,7 +233,7 @@ class PrintDO extends React.Component {
                             <Label className='font-weight-bold'>:</Label>
                         </Col>
                         <Col>
-                            <Label>{this.props.transFD.length}</Label>
+                            <Label>{this.props.transFD && this.props.transFD.length}</Label>
                         </Col>
                     </Row>
                     <div className='my-4'></div>

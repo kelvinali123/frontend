@@ -133,14 +133,17 @@ class PrintSP extends React.Component {
 						</thead>
 
 						<tbody>
-							{this.props.transFD.map((transFD, index) =>
-								<tr>
-									<td className="text-center">{index + 1}</td>
-									<td>{transFD.Pro_Name}</td>
-									<td className="text-center">{parseFloat(transFD.TransfD_Qty_Scan).toFixed(2)}</td>
-									<td className="text-center">{transFD.pack_name}</td>
-								</tr>
-							)}
+							{
+								this.props.transFD &&
+								this.props.transFD.map((transFD, index) =>
+									<tr>
+										<td className="text-center">{index + 1}</td>
+										<td>{transFD.Pro_Name}</td>
+										<td className="text-center">{parseFloat(transFD.TransfD_Qty_Scan).toFixed(2)}</td>
+										<td className="text-center">{transFD.pack_name}</td>
+									</tr>
+								)
+							}
 						</tbody>
 					</Table>
 

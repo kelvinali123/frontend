@@ -73,7 +73,7 @@ class NewPage extends React.Component {
     }
 
     getDataUser = () => {
-        var url=BACKEND + "/users?type=getUserFirebase"
+        var url=BACKEND + "/users?typeGet=getUserFirebase"
         Axios.get(url)
         .then((response) => {
             if (response.data.data) {
@@ -152,10 +152,10 @@ class NewPage extends React.Component {
             .then(() => {
                 this.getDataUser();
                 this.closeUpdateModal();
-                console.log('Posted')
+                
             })
             .catch(error => {
-                console.log('ErrorMsg: ' + error.message)
+                
             })
     }
 
@@ -178,10 +178,10 @@ class NewPage extends React.Component {
             .then(() => {
                 this.getDataUser();
                 this.closeRegisterModal();
-                console.log('Posted')
+                
             })
             .catch(error => {
-                console.log('ErrorMsg: ' + error.message)
+                
             })
     }
 
@@ -226,6 +226,8 @@ class NewPage extends React.Component {
                                         <td>{user.email}</td>
                                         <td>{user.jabatan}</td>
                                         <td><Button size="sm" color="danger" onClick={() => this.openUpdateModal(index)}>Edit</Button></td>
+                                        <td><Button size="sm" color='warning'>Delete</Button></td>
+                                        
                                 </tr>
                                     )
                                 }
@@ -339,6 +341,7 @@ class NewPage extends React.Component {
                         <ModalFooter className = 'd-flex justify-content-center'>
                             <Button color ='danger' onClick={()=> this.closeUpdateModal()}>Cancel</Button>
                                 <Button color='success' onClick={() => this.updateUser()}>Edit</Button>
+                                
                                 
                         </ModalFooter>
 

@@ -37,7 +37,7 @@ const PurchasingPage = React.lazy(() => import('pages/master_outlet/purchasing')
 
 const KafkaPageTest = React.lazy(() => import('pages/KafkaPageTest'));
 const CRP2TidakRefill = React.lazy(() => import('pages/CRP2TidakRefill'));
-const Spdo = React.lazy(() => import('pages/spdo/Spdo'));
+const PrintPreview = React.lazy(() => import('pages/spdo/PrintPreview'));
 const CorrectionPage = React.lazy(() => import('pages/spdo/CorrectionPage'));
 const BatchMonitoring = React.lazy(() => import('pages/spdo/BatchMonitoring'));
 
@@ -71,6 +71,8 @@ const WidgetPage = React.lazy(() => import('pages/template/WidgetPage'));
 const EmptyPage = React.lazy(() => import('pages/EmptyPage'));
 const UserPage = React.lazy(() => import('pages/UserPage'));
 const NewPage = React.lazy(() => import('pages/NewPage'));
+const test = React.lazy(() => import('pages/test'));
+
 
 const getBasename = () => {
   return `/${process.env.PUBLIC_URL.split('/').pop()}`;
@@ -123,7 +125,7 @@ class App extends React.Component {
 
                 <Route exact path="/kafka" component={KafkaPageTest}/>
                 <Route exact path="/crp2-tidak-refill" component={CRP2TidakRefill} />
-                <Route exact path="/spdo" component={Spdo} />
+                <Route exact path="/spdo" component={PrintPreview} />
                 <Route exact path="/correction" component={CorrectionPage} />
                 <Route exact path="/batch-monitoring" component={BatchMonitoring} />
 
@@ -149,7 +151,9 @@ class App extends React.Component {
                 <Route exact path="/charts" component={ChartPage} />
                 <Route exact path="/empty" component={EmptyPage} />
                 <Route exact path="/user" component={UserPage} />
-                <Route exact path="/newpage" component={NewPage}></Route>
+                <Route exact path="/newpage" component={NewPage}/>
+                <Route exact path="/test" component={test}>
+                </Route>
               </React.Suspense>
             </MainLayout>
             <Redirect to="/" />

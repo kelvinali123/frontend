@@ -20,18 +20,28 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 class PrintPackingList extends React.Component {
 
     render() {
-        const d = this.props.currentDate;
-        const date = `${d.getDate().toPrecision(2)}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`;
+        var date;
+        var time;
+        var tglPL;
 
-        const minutes = d.getMinutes().toString().length == 1 ? '0' + d.getMinutes() : d.getMinutes();
-        const seconds = d.getSeconds().toString().length == 1 ? '0' + d.getSeconds() : d.getSeconds();
-        const time = `${d.getHours()}:${minutes}:${seconds}`;
-
-        const THP_TglPL = this.props.THP_TglPL ? this.props.THP_TglPL : '1900-01-01';
-        const tglPLDate = THP_TglPL.substr(8, 2);
-        const tglPLMonth = MONTHS[parseInt(THP_TglPL.substr(5, 2)) - 1];
-        const tglPLYear = THP_TglPL.substr(0, 4);
-        const tglPL = `${tglPLDate}-${tglPLMonth}-${tglPLYear}`;
+        try {
+            const d = this.props.currentDate;
+            date = `${d.getDate().toPrecision(2)}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`;
+    
+            const minutes = d.getMinutes().toString().length == 1 ? '0' + d.getMinutes() : d.getMinutes();
+            const seconds = d.getSeconds().toString().length == 1 ? '0' + d.getSeconds() : d.getSeconds();
+            time = `${d.getHours()}:${minutes}:${seconds}`;
+    
+            const THP_TglPL = this.props.THP_TglPL ? this.props.THP_TglPL : '1900-01-01';
+            const tglPLDate = THP_TglPL.substr(8, 2);
+            const tglPLMonth = MONTHS[parseInt(THP_TglPL.substr(5, 2)) - 1];
+            const tglPLYear = THP_TglPL.substr(0, 4);
+            tglPL = `${tglPLDate}-${tglPLMonth}-${tglPLYear}`;
+        } catch (error) {
+            date = '1900-01-01';
+            time = '00:00:00'
+            tglPL = '1900-01-01'
+        }
 
         return (
             <Card className="m-1 p-4" >
@@ -120,15 +130,18 @@ class PrintPackingList extends React.Component {
                                 <td></td>
                                 <td>{parseFloat(this.props.totalBerat).toFixed(2)}</td>
                             </tr>
-                            {this.props.transFD.map(transFD => 
-                                <tr>
-                                    <td></td>
-                                    <td>{transFD.Pro_Name}</td>
-                                    <td className="text-center">{transFD.TransfD_BatchNumber}</td>
-                                    <td className="text-center">{transFD.TransfD_Qty_Scan}</td>
-                                    <td></td>
-                                </tr>
-                            )}
+                            {
+                                this.props.transFD &&
+                                this.props.transFD.map(transFD => 
+                                    <tr>
+                                        <td></td>
+                                        <td>{transFD.Pro_Name}</td>
+                                        <td className="text-center">{transFD.TransfD_BatchNumber}</td>
+                                        <td className="text-center">{transFD.TransfD_Qty_Scan}</td>
+                                        <td></td>
+                                    </tr>
+                                )
+                            }
                         </tbody>
                     </Table>
 
