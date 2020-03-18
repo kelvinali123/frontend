@@ -136,7 +136,7 @@ class PrintPreview extends React.Component {
 			listDataTable2:[],
 		
 		}
-		BACKEND ='http://10.0.112.33:4444/'
+		BACKEND ='http://10.0.112.33:4444'
 	}
 
 	setActiveTab = (tab) => {
@@ -167,7 +167,7 @@ class PrintPreview extends React.Component {
 	}
 
 	getTableData =() =>{
-		var url=BACKEND +"printApple?get=printapple"
+		var url=BACKEND +"/printApple?get=printapple"
 		Axios.get(url)
 			.then(response=>{
 				if(response.data.data){
@@ -461,7 +461,7 @@ class PrintPreview extends React.Component {
 							<tbody>
 							{
                                     this.state.listDataTable2.map((data, index)=>
-								<tr onClick={() => this.showrePrintFunction(index)} >
+								<tr onClick={(index) => this.showrePrintFunction(index)} >
 									<td>{index+1}</td>
 									<td>{data.no_pl}</td>
 									<td>{data.trans_fh}</td>

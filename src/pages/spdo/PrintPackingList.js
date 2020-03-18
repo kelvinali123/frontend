@@ -135,9 +135,9 @@ class PrintPackingList extends React.Component {
                                 this.props.transFD.map(transFD => 
                                     <tr>
                                         <td></td>
-                                        <td>{transFD.Pro_Name}</td>
-                                        <td className="text-center">{transFD.TransfD_BatchNumber}</td>
-                                        <td className="text-center">{transFD.TransfD_Qty_Scan}</td>
+                                        <td>{transFD.pro_name}</td>
+                                        <td className="text-center">{transFD.trans_fd_batch_number}</td>
+                                        <td className="text-center">{transFD.trans_fd_qty_scan}</td>
                                         <td></td>
                                     </tr>
                                 )

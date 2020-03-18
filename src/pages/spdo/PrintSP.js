@@ -128,7 +128,7 @@ class PrintSP extends React.Component {
 								<th className="text-center">NO</th>
 								<th>KETERANGAN PRODUK</th>
 								<th className="text-center">KUANTITI</th>
-								<th></th>
+								<th className="text-center">PACK NAME</th>
 							</tr>
 						</thead>
 
@@ -138,8 +138,8 @@ class PrintSP extends React.Component {
 								this.props.transFD.map((transFD, index) =>
 									<tr>
 										<td className="text-center">{index + 1}</td>
-										<td>{transFD.Pro_Name}</td>
-										<td className="text-center">{parseFloat(transFD.TransfD_Qty_Scan).toFixed(2)}</td>
+										<td>{transFD.pro_name}</td>
+										<td className="text-center">{parseFloat(transFD.trans_fd_qty_scan).toFixed(2)}</td>
 										<td className="text-center">{transFD.pack_name}</td>
 									</tr>
 								)

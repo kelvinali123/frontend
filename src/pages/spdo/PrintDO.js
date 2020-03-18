@@ -189,18 +189,18 @@ class PrintDO extends React.Component {
                                 this.props.transFD &&
                                 this.props.transFD.map(transFD =>
                                     <tr>
-                                        <td className="text-center">{transFD.TransfD_ProCod}</td>
-                                        <td>{transFD.Pro_Name}</td>
-                                        <td className="text-center">{transFD.TransfD_BatchNumber}</td>
+                                        <td className="text-center">{transFD.trans_fd_pro_cod}</td>
+                                        <td>{transFD.trans_fd_pro_cod}</td>
+                                        <td className="text-center">{transFD.trans_fd_batch_number}</td>
                                         <td className="text-center">
                                             {
-                                                transFD.TransfD_ED &&
-                                                transFD.TransfD_ED.substr(5, 2) + '/' + // Month
-                                                transFD.TransfD_ED.substr(8, 2) + '/' + // Date
-                                                transFD.TransfD_ED.substr(0, 4) // Year
+                                                transFD.trans_fd_ed &&
+                                                transFD.trans_fd_ed.substr(5, 2) + '/' + // Month
+                                                transFD.trans_fd_ed.substr(8, 2) + '/' + // Date
+                                                transFD.trans_fd_ed.substr(0, 4) // Year
                                             }
                                         </td>
-                                        <td className="text-center">{transFD.TransfD_Qty_Scan}</td>
+                                        <td className="text-center">{transFD.trans_fd_qty_scan}</td>
                                         <td className="text-center">{transFD.pack_name}</td>
                                     </tr>
                                 )
