@@ -35,6 +35,7 @@ import {
 	Nav, 
 	NavItem, 
 	NavLink,
+	Alert,
 } from 'reactstrap';
 import {
 	MdAdd,
@@ -133,10 +134,13 @@ class PrintPreview extends React.Component {
 			activeTab: false,
 
 			listDataTable: [],
+			// listDataTable2:[],
 			listDataTable2:[],
+
+			TextInputValue: '',
 		
 		}
-		BACKEND ='http://10.0.112.33:4444'
+		BACKEND ='http://10.0.111.121:4444'
 	}
 
 	setActiveTab = (tab) => {
@@ -147,39 +151,49 @@ class PrintPreview extends React.Component {
 	}
 	}
 
+	setActiveTab2 = (tab) => {
+		if(this.state.activeTab2!==tab){
+		this.setState({
+			activeTab2 : tab
+		})
+	}
+	}
+
 
 	showrePrintFunction =(index)=>{
 		this.getrePrintData(index);
 		this.setState({
-			showrePrint : !this.state.showrePrint
+			showPrint : true
 		})
 	}
 
 	showPrintFunction = (index) => {
 		this.getPrintData(index);
 		this.setState({
-			showPrint : !this.state.showPrint
+			showPrint : true
 		})
 	}
 
 	componentDidMount(){
 		 this.getTableData()
+		 this.getTable2Data()
 	}
 
 	getTableData =() =>{
-		var url=BACKEND +"/printApple?get=printapple"
+		var url=BACKEND +"/printApple?get=printAppleAll"
 		Axios.get(url)
 			.then(response=>{
 				if(response.data.data){
 					this.setState({
 						listDataTable: response.data.data
 					})
+					console.log('Response: ' + JSON.stringify(response.data.data));
 				}
 			})
 	}
 
 	getTable2Data =() =>{
-		var url=BACKEND +""
+		var url=BACKEND +"/printApple?get=printAppleStorageAll"
 		Axios.get(url)
 			.then(response=>{
 				if(response.data.data){
@@ -191,8 +205,8 @@ class PrintPreview extends React.Component {
 	}
 
 	getrePrintData = async (index) =>{
-		var data = this.state.listDataTable[index]
-		console.log('data: '+ JSON.stringify(data))
+		var data = this.state.listDataTable2[index]
+		console.log('data2: '+ JSON.stringify(data))
 		this.setState({
 			alamatCabAMS: data.alamat_cab_ams,
 			apoOutApoteker: data.apo_out_apoteker,
@@ -328,6 +342,57 @@ class PrintPreview extends React.Component {
 
 				
 				}
+
+				
+			
+				textInputOnChange = (event) => {
+					const value = event.target.value;
+					this.setState({
+						TextInputValue: value
+					})
+				}
+
+				SearchByNumber2 =() =>{
+
+					var url=BACKEND +"/printApple?get=getByIDFinal&ID="+this.state.TextInputValue
+					console.log('URL: ' + url)
+					Axios.get(url)
+					.then(response=>{
+						var hasData;
+
+						if (response.data.data) {
+							hasData = true;
+						}
+						else {
+							hasData = false;
+						}
+
+						if (hasData && this.state.activeTab=='1'){
+							this.setState({
+								listDataTable : response.data.data
+							})
+						}
+						else if (!hasData && this.state.activeTab=='1') {
+							this.setState({
+								listDataTable: []
+							})
+						}
+						else if (hasData && this.state.activeTab=='2'){
+							this.setState({
+								listDataTable2: response.data.data
+							})
+						}
+						else if (!hasData && this.state.activeTab=='2') {
+							this.setState({
+								listDataTable2: []
+							})
+						}
+					})
+			}
+
+				
+			
+				  
 			
 
 	
@@ -342,12 +407,43 @@ class PrintPreview extends React.Component {
 						</CardHeader>
 						<CardBody>
 							<Card body>
-							<Row form >
+
+			<Nav tabs>
+        <NavItem>
+          <NavLink
+            className={classnames({ active: this.state.activeTab2 === '1' })}
+			onClick={() => {this.setActiveTab2('1'); }}
+          >
+           Search By Number
+          </NavLink>
+		</NavItem>
+
+		<NavItem>
+          <NavLink
+            className={classnames({ active: this.state.activeTab2 === '2' })}
+			onClick={() => {this.setActiveTab2('2'); }}
+          >
+            Search by Date
+          </NavLink>
+		</NavItem>
+		</Nav>	
+
+		<TabContent activeTab={this.state.activeTab2}>
+			<TabPane tabId='1'>
+
+				<Row form className='mt-3'>
+				<Col md='4'>
+						<Label className='font-weight-bold' style={{ 'font-size': '30px' }}>Search By Number</Label>
+					</Col>
+				</Row>
+
+				<Row form className='mt-3'>
+					
 					<Col md='2'><Label>Search Berdasarkan</Label></Col>
 					
 						<Col md='2'>
 						
-						<Input type='select' value= {this.state.dataSelect}>
+						<Input type='select'>
 							<option value='0'>--Pilih--</option>
 							<option value='1'>PL</option>
 							<option value='2'>DO</option>
@@ -357,6 +453,27 @@ class PrintPreview extends React.Component {
 						</Input>
 						</Col>
 					</Row>
+						<Row form className='mt-3'>
+						<Col md='2'>
+							<Label>
+								Input Nomor
+							</Label>
+						</Col>
+							<Col md='3'>
+							<Input type='number' value={this.setState.TextInputValue} onChange={(event) => this.textInputOnChange(event)}></Input>
+							</Col>
+							<Col md='3'>
+								<Button onClick ={()=>this.SearchByNumber2()}>Search</Button>
+							</Col>
+						</Row>
+						</TabPane>
+
+						<TabPane tabId='2'>
+						<Row form className='mt-3'>
+							<Col md='2'>
+							<Label className='font-weight-bold' style={{ 'font-size': '30px' }}>Search By Date</Label>
+							</Col>
+						</Row>
 					
 					<Row form className='mt-3'>
 						<Col md='2'>
@@ -381,10 +498,16 @@ class PrintPreview extends React.Component {
 						<Button color='warning' onClick ={()=>this.resetInputData()}>Reset</Button>
 						</Col>
 					</Row>
-							</Card>
+					</TabPane>
+					</TabContent>
+						</Card>
+						
+						
+
 						<Form>
 					<Row>
 						<Col>
+						
 						<Nav tabs>
         <NavItem>
           <NavLink
@@ -415,7 +538,7 @@ class PrintPreview extends React.Component {
 									<th>No</th>
 									<th>No PL</th>
 									<th>No DO</th>
-									<th>No SP</th>
+									<th>Tanggal</th>
 									<th>Status Print</th>
 								</tr>
 							</thead>
@@ -426,7 +549,7 @@ class PrintPreview extends React.Component {
 									<td>{index+1}</td>
 									<td>{data.no_pl}</td>
 									<td>{data.trans_fh}</td>
-									<td></td>
+									<td>{data.thp_tgl_pl.substr(0, 10)}</td>
 									<td></td>
 								</tr>
 									)
@@ -454,18 +577,18 @@ class PrintPreview extends React.Component {
 									<th>No</th>
 									<th>No PL</th>
 									<th>No DO</th>
-									<th>No SP</th>
+									<th>Tanggal</th>
 									<th>Status Print</th>
 								</tr>
 							</thead>
 							<tbody>
 							{
                                     this.state.listDataTable2.map((data, index)=>
-								<tr onClick={(index) => this.showrePrintFunction(index)} >
+								<tr onClick={() => this.showrePrintFunction(index)} >
 									<td>{index+1}</td>
 									<td>{data.no_pl}</td>
 									<td>{data.trans_fh}</td>
-									<td></td>
+									<td >{data.thp_tgl_pl.substr(0, 10)}</td>
 									<td></td>
 								</tr>
 									)
@@ -488,7 +611,7 @@ class PrintPreview extends React.Component {
 						<Row>
 							<Col className='d-flex justify-content-center'>
 								<ReactToPrint
-									trigger={() => <Button><MdPrint /> Print</Button>}
+									trigger={() => <Button><MdPrint/> Print</Button>}
 									content={() => this.printRef} />
 								</Col>
 						</Row>
