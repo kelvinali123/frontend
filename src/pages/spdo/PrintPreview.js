@@ -354,7 +354,15 @@ class PrintPreview extends React.Component {
 
 				SearchByNumber2 =() =>{
 
-					var url=BACKEND +"/printApple?get=getByIDFinal&ID="+this.state.TextInputValue
+					var url;
+
+					if (this.state.activeTab=='1') {
+						url=BACKEND +"/printApple?get=getByIDTemp&ID="+this.state.TextInputValue
+					}
+					else {
+						url=BACKEND +"/printApple?get=getByIDFinal&ID="+this.state.TextInputValue
+					}
+
 					console.log('URL: ' + url)
 					Axios.get(url)
 					.then(response=>{
