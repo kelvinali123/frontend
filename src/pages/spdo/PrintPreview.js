@@ -136,11 +136,13 @@ class PrintPreview extends React.Component {
 			listDataTable: [],
 			// listDataTable2:[],
 			listDataTable2:[],
+			activeTab : '1',
+			activeTab2 : '1',
 
 			TextInputValue: '',
 		
 		}
-		BACKEND ='http://10.0.111.121:4444'
+		BACKEND ='http://10.0.111.139:4444'
 	}
 
 	setActiveTab = (tab) => {
@@ -352,6 +354,67 @@ class PrintPreview extends React.Component {
 					})
 				}
 
+				dataDateOnChange = (type, event) =>{
+					const value = event.target.value;
+					this.setState({
+						['data' + type] : value
+					})
+				}
+
+				SearchByDate =()=>{
+					var url;
+
+					var date1 = new Date(this.state.dataDate1);
+					var date2 = new Date(this.state.dataDate2);
+
+					if (this.state.activeTab=='1') {
+						url=BACKEND +"/printApple?get=getByTglTemp&Start="+this.state.dataDate1+"&End="+this.state.dataDate2
+					}
+					else {
+						url=BACKEND +"/printApple?get=getByTglFinal&Start="+this.state.dataDate1+"&End="+this.state.dataDate2
+					}
+
+					if(date2.getTime() <= date1.getTime()){
+					alert('Tanggal kedua lebih besar dari yang pertama')
+					}
+					else{
+						Axios.get(url)
+						.then(response=>{
+							var hasData;
+	
+							if (response.data.data) {
+								hasData = true;
+							}
+							else {
+								hasData = false;
+							}
+	
+							if (hasData && this.state.activeTab=='1'){
+								this.setState({
+									listDataTable : response.data.data
+								})
+							}
+							else if (!hasData && this.state.activeTab=='1') {
+								this.setState({
+									listDataTable: []
+								})
+							}
+							else if (hasData && this.state.activeTab=='2'){
+								this.setState({
+									listDataTable2: response.data.data
+								})
+							}
+							else if (!hasData && this.state.activeTab=='2') {
+								this.setState({
+									listDataTable2: []
+								})
+							}
+					
+
+					})
+				}
+				}
+
 				SearchByNumber2 =() =>{
 
 					var url;
@@ -363,7 +426,7 @@ class PrintPreview extends React.Component {
 						url=BACKEND +"/printApple?get=getByIDFinal&ID="+this.state.TextInputValue
 					}
 
-					console.log('URL: ' + url)
+					
 					Axios.get(url)
 					.then(response=>{
 						var hasData;
@@ -416,26 +479,14 @@ class PrintPreview extends React.Component {
 						<CardBody>
 							<Card body>
 
-			<Nav tabs>
-        <NavItem>
-          <NavLink
-            className={classnames({ active: this.state.activeTab2 === '1' })}
-			onClick={() => {this.setActiveTab2('1'); }}
-          >
-           Search By Number
-          </NavLink>
-		</NavItem>
-
-		<NavItem>
-          <NavLink
-            className={classnames({ active: this.state.activeTab2 === '2' })}
-			onClick={() => {this.setActiveTab2('2'); }}
-          >
-            Search by Date
-          </NavLink>
-		</NavItem>
-		</Nav>	
-
+			<Input type='select' value={this.state.activeTab2} onChange={(event)=>this.setActiveTab2(event.target.value)}>
+				<option value='1'>
+					Search by Number
+				</option>
+				<option value='2'>
+					Search by Date
+				</option>
+			</Input>
 		<TabContent activeTab={this.state.activeTab2}>
 			<TabPane tabId='1'>
 
@@ -445,22 +496,6 @@ class PrintPreview extends React.Component {
 					</Col>
 				</Row>
 
-				<Row form className='mt-3'>
-					
-					<Col md='2'><Label>Search Berdasarkan</Label></Col>
-					
-						<Col md='2'>
-						
-						<Input type='select'>
-							<option value='0'>--Pilih--</option>
-							<option value='1'>PL</option>
-							<option value='2'>DO</option>
-							<option value='3'>SP</option>
-							<option value='4'>Label</option>
-							<option value='5'>Faktur</option>
-						</Input>
-						</Col>
-					</Row>
 						<Row form className='mt-3'>
 						<Col md='2'>
 							<Label>
@@ -471,7 +506,7 @@ class PrintPreview extends React.Component {
 							<Input type='number' value={this.setState.TextInputValue} onChange={(event) => this.textInputOnChange(event)}></Input>
 							</Col>
 							<Col md='3'>
-								<Button onClick ={()=>this.SearchByNumber2()}>Search</Button>
+								<Button color='info' onClick ={()=>this.SearchByNumber2()}>Search</Button>
 							</Col>
 						</Row>
 						</TabPane>
@@ -488,7 +523,7 @@ class PrintPreview extends React.Component {
 						<Label>Tanggal</Label>
 						</Col>
 						<Col md='3'>
-						<Input type='date' value={this.state.dataDate1}></Input>
+						<Input type='date' value={this.state.dataDate1} onChange={(event) => this.dataDateOnChange('Date1', event)}></Input>
 						
 						</Col>
 						<Col md='auto'>
@@ -496,14 +531,14 @@ class PrintPreview extends React.Component {
 						
 						</Col>
 						<Col md='3'>
-						<Input type='date' value={this.state.dataDate2}></Input>
+						<Input type='date' value={this.state.dataDate2} onChange={(event) => this.dataDateOnChange('Date2', event)}></Input>
 						
 						</Col>
 					</Row>
 					<Row className='mt-4'>
 						<Col className='d-flex justify-content-center'>
-						<Button className='mr-2'>Search</Button>
-						<Button color='warning' onClick ={()=>this.resetInputData()}>Reset</Button>
+						<Button color='info' className='mr-2' onClick ={()=>this.SearchByDate()}>Search</Button>
+						<Button color='danger' onClick ={()=>this.resetInputData()}>Reset</Button>
 						</Col>
 					</Row>
 					</TabPane>
@@ -516,25 +551,14 @@ class PrintPreview extends React.Component {
 					<Row>
 						<Col>
 						
-						<Nav tabs>
-        <NavItem>
-          <NavLink
-            className={classnames({ active: this.state.activeTab === '1' })}
-			onClick={() => {this.setActiveTab('1'); }}
-          >
-            Print
-          </NavLink>
-		</NavItem>
-
-		<NavItem>
-          <NavLink
-            className={classnames({ active: this.state.activeTab === '2' })}
-			onClick={() => {this.setActiveTab('2'); }}
-          >
-            Re-Print
-          </NavLink>
-		</NavItem>
-		</Nav>
+				<Input type='select' value={this.state.activeTab} onChange={(event)=>this.setActiveTab(event.target.value)} className='mt-4'>
+				<option value='1'>
+					Print
+				</option>
+				<option value='2'>
+					Re-Print
+				</option>
+			</Input>
 		<TabContent activeTab={this.state.activeTab}>
 			<TabPane tabId='1'>
 			<Row >
@@ -547,7 +571,7 @@ class PrintPreview extends React.Component {
 									<th>No PL</th>
 									<th>No DO</th>
 									<th>Tanggal</th>
-									<th>Status Print</th>
+									<th>Alamat</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -558,7 +582,7 @@ class PrintPreview extends React.Component {
 									<td>{data.no_pl}</td>
 									<td>{data.trans_fh}</td>
 									<td>{data.thp_tgl_pl.substr(0, 10)}</td>
-									<td></td>
+									<td>{data.alamat_cab_ams}</td>
 								</tr>
 									)
 								}
@@ -586,7 +610,7 @@ class PrintPreview extends React.Component {
 									<th>No PL</th>
 									<th>No DO</th>
 									<th>Tanggal</th>
-									<th>Status Print</th>
+									<th>Alamat</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -597,7 +621,7 @@ class PrintPreview extends React.Component {
 									<td>{data.no_pl}</td>
 									<td>{data.trans_fh}</td>
 									<td >{data.thp_tgl_pl.substr(0, 10)}</td>
-									<td></td>
+									<td>{data.alamat_cab_ams}</td>
 								</tr>
 									)
 								}
@@ -616,13 +640,11 @@ class PrintPreview extends React.Component {
 				{
 					(this.state.showPrint) &&
 					<div>
-						<Row>
-							<Col className='d-flex justify-content-center'>
-								<ReactToPrint
-									trigger={() => <Button><MdPrint/> Print</Button>}
-									content={() => this.printRef} />
-								</Col>
-						</Row>
+						
+						
+
+								
+						
 						<Row>
 							<Col>
 								<Print 
@@ -683,8 +705,117 @@ class PrintPreview extends React.Component {
 									totalPPN={this.state.totalPPN}
 
 									/>
+									<PrintPackingList
+									ref={(el) => (this.printPL = el)}
+									currentDate={new Date()}
+
+									noDO={''}
+									transFD={this.state.transFD}
+									totalBerat={this.state.totalBerat}
+
+									THP_NoPL={this.state.tHPNoPL}
+									THP_TglPL={this.state.tHPTglPL}
+									THP_NoPOD={this.state.tHPNoPOD}
+									Out_Code={this.state.outCode}
+									Out_Name={this.state.outName}
+									THP_DistName={this.state.tHPDistName} />
+
+									<PrintSP
+									ref={(el) => (this.printSP = el)}
+									OrdLcl_NoPO={this.state.ordLclNoPO}
+									OrdLcl_TglPO={this.state.ordLclTglPO}
+								
+									Kepada={this.state.kepada}
+									sup_address={this.state.supaddress}
+									consup={this.state.consup}
+									finsup_top={this.state.finsuptop}
+								
+									NamaGudang={this.state.namaGudang}
+									OutAddress={this.state.outAddress}
+								
+									transFD={this.state.transFD}
+									
+									ApoOut_Apoteker={this.state.apoOutApoteker}
+									ApoOut_SIA={this.state.apoOutSIA} />
+
+
+
+									<PrintDO
+									ref={(el) => (this.printDO = el)}
+									noDO={''}
+									tglDO={''}
+									transFH={this.state.transFH}
+									transFD={this.state.transFD}
+									totalBerat={this.state.totalBerat}
+									outnameDari={this.state.outnameDari}
+									outaddressDari={this.state.outaddressDari}
+									telpDari={this.state.telpDari}
+									ijinDari={this.state.ijinDari}
+									apj={this.state.apj}
+									sika={this.state.sika}
+									npwpDari={this.state.npwpDari}
+									namaOutlet={this.state.namaOutlet}
+									outaddressTujuan={this.state.outaddressTujuan}
+									telpTujuan={this.state.telpTujuan}
+									ijinTujuan={this.state.ijinTujuan}
+									apjTujuan={this.state.apjTujuan}
+									sikaTujuan={this.state.sikaTujuan}
+									npwpTujuan={this.state.npwpTujuan}
+									totalQTY={this.state.totalQTY}
+									pembuat={this.state.pembuat} />
+
+									<PrintLabelPlastic
+									ref={(el) => (this.printLabel = el)}
+									KodeOutAMS={this.state.kodeOutAMS}
+									NamaOut={this.state.namaOut}
+									NamaCabsAMS={this.state.namaCabsAMS}
+									AlamatCabAMS={this.state.alamatCabAMS}
+									NOPL={this.state.nOPL} />
+
+									<PrintFaktur 
+									ref={(el) => (this.printFaktur = el)}
+									/>
+
 							</Col>
 						</Row>
+
+						<Row>
+								<Col className='d-flex justify-content-center'>
+								<ReactToPrint
+									trigger={() => <Button color='primary'><MdPrint/>Print PL</Button>}
+									content={() => this.printPL} />
+								</Col>
+								<Col className='d-flex justify-content-center'>
+								<ReactToPrint
+									trigger={() => <Button color='primary'><MdPrint/>Print SP</Button>}
+									content={() => this.printSP} />
+								</Col>
+								<Col className='d-flex justify-content-center'>
+								<ReactToPrint
+									trigger={() => <Button color='primary'><MdPrint/>Print DO</Button>}
+									content={() => this.printDO} />
+								</Col>
+
+								<Col className='d-flex justify-content-center'>
+								<ReactToPrint
+									trigger={() => <Button color='primary'><MdPrint/>Print Label</Button>}
+									content={() => this.printLabel} />
+								</Col>
+								<Col className='d-flex justify-content-center'>
+								<ReactToPrint
+									trigger={() => <Button color='primary'><MdPrint/>Print Faktur</Button>}
+									content={() => this.printFaktur} />
+								</Col>
+								</Row>
+
+								<Row>
+							<Col className='d-flex justify-content-center , mt-4'>
+								<ReactToPrint
+									trigger={() => <Button color='success'><MdPrint/>Print All</Button>}
+									content={() => this.printRef} />
+									
+								</Col>
+								</Row>
 					</div>
 					
 				}
