@@ -36,6 +36,9 @@ import {
 	NavItem, 
 	NavLink,
 	Alert,
+	Pagination,
+	PaginationItem, 
+	PaginationLink,
 } from 'reactstrap';
 import {
 	MdAdd,
@@ -132,17 +135,22 @@ class PrintPreview extends React.Component {
 			totalHarga: 0,
 			totalPPN: 0,
 			activeTab: false,
+			activePage : 1,
 
 			listDataTable: [],
 			// listDataTable2:[],
 			listDataTable2:[],
 			activeTab : '1',
 			activeTab2 : '1',
+			currentPage : 1,
+			totalPage : 1,
+			flag : 0,
+
 
 			TextInputValue: '',
 		
 		}
-		BACKEND ='http://10.0.111.139:4444'
+		BACKEND ='http://10.0.111.135:2442'
 	}
 
 	setActiveTab = (tab) => {
@@ -182,7 +190,7 @@ class PrintPreview extends React.Component {
 	}
 
 	getTableData =() =>{
-		var url=BACKEND +"/printApple?get=printAppleAll"
+		var url=BACKEND +"/printApple?get=getPrintPageFinal&page=" + this.state.currentPage + "&length=5"
 		Axios.get(url)
 			.then(response=>{
 				if(response.data.data){
@@ -195,7 +203,7 @@ class PrintPreview extends React.Component {
 	}
 
 	getTable2Data =() =>{
-		var url=BACKEND +"/printApple?get=printAppleStorageAll"
+		var url=BACKEND +"/printApple?get=getPrintPageTemp&page=" + this.state.currentPage + "&length=5"
 		Axios.get(url)
 			.then(response=>{
 				if(response.data.data){
@@ -461,10 +469,69 @@ class PrintPreview extends React.Component {
 					})
 			}
 
-				
 			
-				  
 			
+			 PaginationFirst(event) {
+				event.preventDefault();
+				this.setState({
+					currentPage: 1
+				}, () => this.getTableData());
+			}
+
+			PaginationLast(event) {
+				event.preventDefault();
+				this.setState({
+					currentPage : this.state.totalPage
+				}, () => this.getTableData());
+			}
+
+			PaginationPrev(event) {
+				event.preventDefault();
+				var currentPage = this.state.currentPage;
+				this.setState({
+					currentPage: currentPage - 1 < 1 ? 1 : currentPage - 1
+				}, () => this.getTableData());
+			}
+
+			PaginationNext(event) {
+				event.preventDefault();
+				var currentPage = this.state.currentPage;
+				var totalPage = this.state.totalPage;
+				this.setState({
+					currentPage: currentPage + 1 > totalPage ? totalPage : currentPage + 1
+				}, () => this.getTableData());
+			}
+
+			Pagination2First(event) {
+				event.preventDefault();
+				this.setState({
+					currentPage: 1
+				}, () => this.getTable2Data());
+			}
+
+			Pagination2Last(event) {
+				event.preventDefault();
+				this.setState({
+					currentPage : this.state.totalPage
+				}, () => this.getTable2Data());
+			}
+
+			Pagination2Prev(event) {
+				event.preventDefault();
+				var currentPage = this.state.currentPage;
+				this.setState({
+					currentPage: currentPage - 1 < 1 ? 1 : currentPage - 1
+				}, () => this.getTable2Data());
+			}
+
+			Pagination2Next(event) {
+				event.preventDefault();
+				var currentPage = this.state.currentPage;
+				var totalPage = this.state.totalPage;
+				this.setState({
+					currentPage: currentPage + 1 > totalPage ? totalPage : currentPage + 1
+				}, () => this.getTable2Data());
+			}
 
 	
 
@@ -563,8 +630,24 @@ class PrintPreview extends React.Component {
 			<TabPane tabId='1'>
 			<Row >
 					<Col>
-					
-						<Table hover>
+					<Pagination className = 'mt-4'>
+						<PaginationItem>
+							<PaginationLink first onClick={(event) => this.PaginationFirst(event)}>&lt;&lt;</PaginationLink>
+						</PaginationItem>
+						<PaginationItem>
+							<PaginationLink previous onClick={(event) => this.PaginationPrev(event)}>&lt;</PaginationLink>
+						</PaginationItem>
+						<PaginationItem active>
+							<PaginationLink disabled>{this.state.currentPage}</PaginationLink>
+						</PaginationItem>
+						<PaginationItem>
+							<PaginationLink next onClick={(event) => this.PaginationNext(event)}>&gt;</PaginationLink>
+						</PaginationItem>
+						<PaginationItem>
+							<PaginationLink last onClick={(event) => this.PaginationLast(event)}>&gt;&gt;</PaginationLink>
+						</PaginationItem>
+					</Pagination>
+						<Table hover bordered>
 							<thead>
 								<tr>
 									<th>No</th>
@@ -602,8 +685,25 @@ class PrintPreview extends React.Component {
 			<TabPane tabId='2'>
 			<Row >
 					<Col>
+					<Pagination className = 'mt-4'>
+						<PaginationItem>
+							<PaginationLink first onClick={(event) => this.Pagination2First(event)}>&lt;&lt;</PaginationLink>
+						</PaginationItem>
+						<PaginationItem>
+							<PaginationLink previous onClick={(event) => this.Pagination2Prev(event)}>&lt;</PaginationLink>
+						</PaginationItem>
+						<PaginationItem active>
+							<PaginationLink disabled>{this.state.currentPage}</PaginationLink>
+						</PaginationItem>
+						<PaginationItem>
+							<PaginationLink next onClick={(event) => this.Pagination2Next(event)}>&gt;</PaginationLink>
+						</PaginationItem>
+						<PaginationItem>
+							<PaginationLink last onClick={(event) => this.Pagination2Last(event)}>&gt;&gt;</PaginationLink>
+						</PaginationItem>
+					</Pagination>
 					
-						<Table hover>
+						<Table hover bordered>
 							<thead>
 								<tr>
 									<th>No</th>
@@ -640,6 +740,44 @@ class PrintPreview extends React.Component {
 				{
 					(this.state.showPrint) &&
 					<div>
+
+<Row>
+								<Col className='d-flex justify-content-center'>
+								<ReactToPrint
+									trigger={() => <Button color='primary'><MdPrint/>Print PL</Button>}
+									content={() => this.printPL} />
+								</Col>
+								<Col className='d-flex justify-content-center'>
+								<ReactToPrint
+									trigger={() => <Button color='primary'><MdPrint/>Print SP</Button>}
+									content={() => this.printSP} />
+								</Col>
+								<Col className='d-flex justify-content-center'>
+								<ReactToPrint
+									trigger={() => <Button color='primary'><MdPrint/>Print DO</Button>}
+									content={() => this.printDO} />
+								</Col>
+
+								<Col className='d-flex justify-content-center'>
+								<ReactToPrint
+									trigger={() => <Button color='primary'><MdPrint/>Print Label</Button>}
+									content={() => this.printLabel} />
+								</Col>
+								<Col className='d-flex justify-content-center'>
+								<ReactToPrint
+									trigger={() => <Button color='primary'><MdPrint/>Print Faktur</Button>}
+									content={() => this.printFaktur} />
+								</Col>
+								</Row>
+
+								<Row>
+							<Col className='d-flex justify-content-center , mt-4'>
+								<ReactToPrint
+									trigger={() => <Button color='success'><MdPrint/>Print All</Button>}
+									content={() => this.printRef} />
+									
+								</Col>
+								</Row>
 						
 						
 
@@ -706,10 +844,11 @@ class PrintPreview extends React.Component {
 
 									/>
 									<PrintPackingList
+									className='d-none'
 									ref={(el) => (this.printPL = el)}
 									currentDate={new Date()}
 
-									noDO={''}
+									noDO={this.state.transFH}
 									transFD={this.state.transFD}
 									totalBerat={this.state.totalBerat}
 
@@ -721,6 +860,7 @@ class PrintPreview extends React.Component {
 									THP_DistName={this.state.tHPDistName} />
 
 									<PrintSP
+									className='d-none'
 									ref={(el) => (this.printSP = el)}
 									OrdLcl_NoPO={this.state.ordLclNoPO}
 									OrdLcl_TglPO={this.state.ordLclTglPO}
@@ -741,9 +881,10 @@ class PrintPreview extends React.Component {
 
 
 									<PrintDO
+									className='d-none'
 									ref={(el) => (this.printDO = el)}
-									noDO={''}
-									tglDO={''}
+									noDO={this.state.transFH}
+									tglDO={this.state.tglTransf}
 									transFH={this.state.transFH}
 									transFD={this.state.transFD}
 									totalBerat={this.state.totalBerat}
@@ -765,6 +906,7 @@ class PrintPreview extends React.Component {
 									pembuat={this.state.pembuat} />
 
 									<PrintLabelPlastic
+									className='d-none'
 									ref={(el) => (this.printLabel = el)}
 									KodeOutAMS={this.state.kodeOutAMS}
 									NamaOut={this.state.namaOut}
@@ -773,49 +915,14 @@ class PrintPreview extends React.Component {
 									NOPL={this.state.nOPL} />
 
 									<PrintFaktur 
+									className='d-none'
 									ref={(el) => (this.printFaktur = el)}
 									/>
 
 							</Col>
 						</Row>
 
-						<Row>
-								<Col className='d-flex justify-content-center'>
-								<ReactToPrint
-									trigger={() => <Button color='primary'><MdPrint/>Print PL</Button>}
-									content={() => this.printPL} />
-								</Col>
-								<Col className='d-flex justify-content-center'>
-								<ReactToPrint
-									trigger={() => <Button color='primary'><MdPrint/>Print SP</Button>}
-									content={() => this.printSP} />
-								</Col>
-								<Col className='d-flex justify-content-center'>
-								<ReactToPrint
-									trigger={() => <Button color='primary'><MdPrint/>Print DO</Button>}
-									content={() => this.printDO} />
-								</Col>
-
-								<Col className='d-flex justify-content-center'>
-								<ReactToPrint
-									trigger={() => <Button color='primary'><MdPrint/>Print Label</Button>}
-									content={() => this.printLabel} />
-								</Col>
-								<Col className='d-flex justify-content-center'>
-								<ReactToPrint
-									trigger={() => <Button color='primary'><MdPrint/>Print Faktur</Button>}
-									content={() => this.printFaktur} />
-								</Col>
-								</Row>
-
-								<Row>
-							<Col className='d-flex justify-content-center , mt-4'>
-								<ReactToPrint
-									trigger={() => <Button color='success'><MdPrint/>Print All</Button>}
-									content={() => this.printRef} />
-									
-								</Col>
-								</Row>
+						
 					</div>
 					
 				}
@@ -885,7 +992,7 @@ class Print extends React.Component {
 				<PrintPackingList
 					currentDate={new Date()}
 
-					noDO={''}
+					noDO={transFH}
 					transFD={transFD}
 					totalBerat={totalBerat}
 
@@ -899,8 +1006,8 @@ class Print extends React.Component {
 				<div className='mb-4' />
 
 				<PrintDO
-					noDO={''}
-					tglDO={''}
+					noDO={transFH}
+					tglDO={tglTransf}
 					transFH={transFH}
 					transFD={transFD}
 					totalBerat={totalBerat}

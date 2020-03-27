@@ -19,8 +19,10 @@ import { NOTIFICATION_SYSTEM_STYLE } from 'utils/constants';
 class PrintSHI extends React.Component {
 
 	render() {
+        var classes = " " + this.props.className;
+        
 		return (
-			<Card className="m-1 p-4">
+			<Card className={"m-1 p-4" + classes}>
 				<CardHeader>
 					<h5 className='font-weight-bold d-flex justify-content-center'>SURAT HASIL INSPEKSI</h5>
 				</CardHeader>

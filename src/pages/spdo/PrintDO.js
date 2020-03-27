@@ -18,6 +18,8 @@ const MONTHS = ["January", "February", "March", "April", "May", "June", "July", 
 class PrintDO extends React.Component {
 
     render() {
+        var classes = " " + this.props.className;
+
         var tglDO;
 
         try {
@@ -32,7 +34,7 @@ class PrintDO extends React.Component {
             tglDO = '1900-01-01';
         }
         return (
-            <Card className='m-1 p-4'>
+            <Card className={"m-1 p-4" + classes}>
                 <CardHeader>
                     <Row className='d-flex justify-content-between'>
                         <Label></Label>

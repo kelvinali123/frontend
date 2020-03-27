@@ -20,6 +20,8 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 class PrintPackingList extends React.Component {
 
     render() {
+        var classes = " " + this.props.className;
+
         var date;
         var time;
         var tglPL;
@@ -44,7 +46,7 @@ class PrintPackingList extends React.Component {
         }
 
         return (
-            <Card className="m-1 p-4" >
+            <Card className={"m-1 p-4" + classes}>
                 <CardHeader>
                     <Row className='d-flex justify-content-between'>
                         <Label>{date}</Label>

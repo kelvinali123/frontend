@@ -18,6 +18,8 @@ class PrintSP extends React.Component {
 
 	
 	render() {
+        var classes = " " + this.props.className;
+        
 		var tglPO;
 
 		try {
@@ -33,7 +35,7 @@ class PrintSP extends React.Component {
 		}
 
 		return (
-			<Card className="m-1 p-4">
+			<Card className={"m-1 p-4" + classes}>
 				<CardHeader>
 					<Row>
 						<h5 className='w-25'>

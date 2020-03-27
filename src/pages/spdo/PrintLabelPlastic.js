@@ -16,8 +16,10 @@ import {
 class PrintLabelPlastic extends React.Component {
 
 	render() {
+        var classes = " " + this.props.className;
+        
 		return (
-			<Card className="m-1 p-4">
+			<Card className={"m-1 p-4" + classes}>
 				<CardHeader>
 					<Row>
 						<Col>
