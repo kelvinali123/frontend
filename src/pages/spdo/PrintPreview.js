@@ -150,7 +150,7 @@ class PrintPreview extends React.Component {
 			TextInputValue: '',
 		
 		}
-		BACKEND ='http://10.0.111.135:2442'
+		BACKEND ='http://10.0.111.133:2442'
 	}
 
 	setActiveTab = (tab) => {
@@ -193,11 +193,12 @@ class PrintPreview extends React.Component {
 		var url=BACKEND +"/printApple?get=getPrintPageFinal&page=" + this.state.currentPage + "&length=5"
 		Axios.get(url)
 			.then(response=>{
-				if(response.data.data){
+				if(response.data.data.content){
 					this.setState({
-						listDataTable: response.data.data
+						listDataTable: response.data.data.content,
+						totalPage : response.data.data.totalPages
 					})
-					console.log('Response: ' + JSON.stringify(response.data.data));
+					console.log('Response: ' + JSON.stringify(response.data.data.content));
 				}
 			})
 	}
@@ -206,9 +207,10 @@ class PrintPreview extends React.Component {
 		var url=BACKEND +"/printApple?get=getPrintPageTemp&page=" + this.state.currentPage + "&length=5"
 		Axios.get(url)
 			.then(response=>{
-				if(response.data.data){
+				if(response.data.data.content){
 					this.setState({
-						listDataTable2: response.data.data
+						listDataTable2: response.data.data.content,
+						totalPage : response.data.data.totalPages
 					})
 				}
 			})
@@ -354,6 +356,8 @@ class PrintPreview extends React.Component {
 				}
 
 				
+
+				
 			
 				textInputOnChange = (event) => {
 					const value = event.target.value;
@@ -381,6 +385,7 @@ class PrintPreview extends React.Component {
 					else {
 						url=BACKEND +"/printApple?get=getByTglFinal&Start="+this.state.dataDate1+"&End="+this.state.dataDate2
 					}
+					console.log(url)
 
 					if(date2.getTime() <= date1.getTime()){
 					alert('Tanggal kedua lebih besar dari yang pertama')
@@ -533,6 +538,29 @@ class PrintPreview extends React.Component {
 				}, () => this.getTable2Data());
 			}
 
+			ResetOnClick(){
+				this.resetInputData()
+				if(this.state.activeTab==1){
+				this.getTableData()
+				
+			}
+			else{
+				this.getTable2Data()
+				
+			}
+		}
+
+		ResetOnClick2(){
+			
+			if(this.state.activeTab==1){
+				this.getTableData()
+				
+			}
+			else{
+				this.getTable2Data()
+				
+			}
+		}
 	
 
 	render() {
@@ -566,7 +594,7 @@ class PrintPreview extends React.Component {
 						<Row form className='mt-3'>
 						<Col md='2'>
 							<Label>
-								Input Nomor
+								Input Nomor PL
 							</Label>
 						</Col>
 							<Col md='3'>
@@ -574,6 +602,7 @@ class PrintPreview extends React.Component {
 							</Col>
 							<Col md='3'>
 								<Button color='info' onClick ={()=>this.SearchByNumber2()}>Search</Button>
+								<Button color='danger' onClick ={()=>this.ResetOnClick2()}>Reset</Button> 
 							</Col>
 						</Row>
 						</TabPane>
@@ -605,7 +634,8 @@ class PrintPreview extends React.Component {
 					<Row className='mt-4'>
 						<Col className='d-flex justify-content-center'>
 						<Button color='info' className='mr-2' onClick ={()=>this.SearchByDate()}>Search</Button>
-						<Button color='danger' onClick ={()=>this.resetInputData()}>Reset</Button>
+						<Button color='danger' className='mr-2' onClick ={()=>this.ResetOnClick()}>Reset</Button>
+
 						</Col>
 					</Row>
 					</TabPane>
@@ -620,10 +650,10 @@ class PrintPreview extends React.Component {
 						
 				<Input type='select' value={this.state.activeTab} onChange={(event)=>this.setActiveTab(event.target.value)} className='mt-4'>
 				<option value='1'>
-					Print
+					Re-Print
 				</option>
 				<option value='2'>
-					Re-Print
+					Print
 				</option>
 			</Input>
 		<TabContent activeTab={this.state.activeTab}>
@@ -664,7 +694,7 @@ class PrintPreview extends React.Component {
 									<td>{index+1}</td>
 									<td>{data.no_pl}</td>
 									<td>{data.trans_fh}</td>
-									<td>{data.thp_tgl_pl.substr(0, 10)}</td>
+									<td>{data.tgl_transf.substr(0, 10)}</td>
 									<td>{data.alamat_cab_ams}</td>
 								</tr>
 									)
@@ -720,7 +750,7 @@ class PrintPreview extends React.Component {
 									<td>{index+1}</td>
 									<td>{data.no_pl}</td>
 									<td>{data.trans_fh}</td>
-									<td >{data.thp_tgl_pl.substr(0, 10)}</td>
+									<td >{data.tgl_transf.substr(0, 10)}</td>
 									<td>{data.alamat_cab_ams}</td>
 								</tr>
 									)
