@@ -150,13 +150,14 @@ class PrintPreview extends React.Component {
 			TextInputValue: '',
 		
 		}
-		BACKEND ='http://10.0.111.133:2442'
+		BACKEND ='http://10.0.111.129:2442'
 	}
 
 	setActiveTab = (tab) => {
 		if(this.state.activeTab!==tab){
 		this.setState({
-			activeTab : tab
+			activeTab : tab,
+			currentPage : 1,
 		})
 	}
 	}
@@ -190,7 +191,7 @@ class PrintPreview extends React.Component {
 	}
 
 	getTableData =() =>{
-		var url=BACKEND +"/printApple?get=getPrintPageFinal&page=" + this.state.currentPage + "&length=5"
+		var url=BACKEND +"/printApple?get=printPage&page=" + this.state.currentPage + "&length=10"
 		Axios.get(url)
 			.then(response=>{
 				if(response.data.data.content){
@@ -204,7 +205,7 @@ class PrintPreview extends React.Component {
 	}
 
 	getTable2Data =() =>{
-		var url=BACKEND +"/printApple?get=getPrintPageTemp&page=" + this.state.currentPage + "&length=5"
+		var url=BACKEND +"/printApple?get=reprintPage&page=" + this.state.currentPage + "&length=10"
 		Axios.get(url)
 			.then(response=>{
 				if(response.data.data.content){
@@ -350,6 +351,8 @@ class PrintPreview extends React.Component {
 					dataDate1 : '',
 					dataDate2 : '',
 					dataSelect : '0',
+					TextInputValue : '',
+
 				})
 
 				
@@ -380,10 +383,10 @@ class PrintPreview extends React.Component {
 					var date2 = new Date(this.state.dataDate2);
 
 					if (this.state.activeTab=='1') {
-						url=BACKEND +"/printApple?get=getByTglTemp&Start="+this.state.dataDate1+"&End="+this.state.dataDate2
+						url=BACKEND +"/printApple?get=printByTgl&Start="+this.state.dataDate1+"&End="+this.state.dataDate2
 					}
 					else {
-						url=BACKEND +"/printApple?get=getByTglFinal&Start="+this.state.dataDate1+"&End="+this.state.dataDate2
+						url=BACKEND +"/printApple?get=reprintByTgl&Start="+this.state.dataDate1+"&End="+this.state.dataDate2
 					}
 					console.log(url)
 
@@ -433,10 +436,10 @@ class PrintPreview extends React.Component {
 					var url;
 
 					if (this.state.activeTab=='1') {
-						url=BACKEND +"/printApple?get=getByIDTemp&ID="+this.state.TextInputValue
+						url=BACKEND +"/printApple?get=printByID&codeID="+this.state.TextInputValue
 					}
 					else {
-						url=BACKEND +"/printApple?get=getByIDFinal&ID="+this.state.TextInputValue
+						url=BACKEND +"/printApple?get=reprintByID&codeID="+this.state.TextInputValue
 					}
 
 					
@@ -551,7 +554,7 @@ class PrintPreview extends React.Component {
 		}
 
 		ResetOnClick2(){
-			
+			this.resetInputData()
 			if(this.state.activeTab==1){
 				this.getTableData()
 				
@@ -598,7 +601,7 @@ class PrintPreview extends React.Component {
 							</Label>
 						</Col>
 							<Col md='3'>
-							<Input type='number' value={this.setState.TextInputValue} onChange={(event) => this.textInputOnChange(event)}></Input>
+							<Input type='number' value={this.state.TextInputValue} onChange={(event) => this.textInputOnChange(event)}></Input>
 							</Col>
 							<Col md='3'>
 								<Button color='info' onClick ={()=>this.SearchByNumber2()}>Search</Button>
@@ -650,10 +653,10 @@ class PrintPreview extends React.Component {
 						
 				<Input type='select' value={this.state.activeTab} onChange={(event)=>this.setActiveTab(event.target.value)} className='mt-4'>
 				<option value='1'>
-					Re-Print
-				</option>
-				<option value='2'>
 					Print
+				</option>
+				<option value='2' >
+					Re-Print
 				</option>
 			</Input>
 		<TabContent activeTab={this.state.activeTab}>
